@@ -259,6 +259,15 @@ pub struct EmergencyWithdrawalEvent {
     pub timestamp: u64,
 }
 
+/// Event emitted when the contract is paused by an admin.
+#[contracttype]
+#[derive(Clone, Debug)]
+pub struct ContractPausedEvent {
+    pub admin: Address,
+    pub reason: soroban_sdk::String,
+    pub timestamp: u64,
+}
+
 /// Log entry for emergency withdrawal record-keeping.
 #[contracttype]
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -3329,10 +3338,8 @@ impl RewardManager {
         Storage::set_paused(&env, true);
         env.events().publish(
             (symbol_short!("PAUSED"),),
-            EmergencyWithdrawalEvent {
+            ContractPausedEvent {
                 admin,
-                hunt_id: 0,
-                amount: 0,
                 reason,
                 timestamp: env.ledger().timestamp(),
             },
